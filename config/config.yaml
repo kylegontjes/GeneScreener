@@ -1,0 +1,17 @@
+# General information
+samples: config/sample.tsv
+prefix: GeneScreener_smk
+
+# Input queries directory
+queries: /nfs/turbo/umms-esnitkin/Github/GeneScreener/queries
+
+# Data directory
+database_directory: /nfs/turbo/umms-esnitkin/Github/GeneScreener/database
+database_name: "kpc_nuc_db"
+
+# Blast parameters
+dbversion: 5 
+dbtype: "nucl"
+outfmt: 6
+evalue: 1e-100
+max_target_seqs: 1
