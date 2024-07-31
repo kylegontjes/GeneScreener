@@ -2,7 +2,7 @@
 Snakemake to quickly screen gene presence in genes 
 
 # Installation
-git clone [https://github.com/kylegontjes/GeneScreener](https://github.com/kylegontjes/GeneScreener.git)
+git clone https://github.com/kylegontjes/GeneScreener.git
 
 ## Easy run
 ### Singularity and snakemake are necessary 
