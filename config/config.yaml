@@ -3,15 +3,15 @@ samples: config/sample.tsv
 prefix: GeneScreener_smk
 
 # Input queries directory
-queries: /nfs/turbo/umms-esnitkin/Github/GeneScreener/queries
+queries: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Sequence_data/PATRIC/2024-07-30_public/assemblies
 
 # Data directory
-database_directory: /nfs/turbo/umms-esnitkin/Github/GeneScreener/database
-database_name: "kpc_nuc_db"
+database_directory: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Analysis/Operon_genomics/2024-07-31_blast_operon/GeneScreener/database
+database_name: operon_CDS
 
 # Blast parameters
 dbversion: 5 
-dbtype: "nucl"
+dbtype: nucl
 outfmt: 6
 evalue: 1e-100
 max_target_seqs: 1
