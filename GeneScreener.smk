@@ -24,7 +24,8 @@ if not os.path.exists("logs"):
 rule all:
     input:
         database_nbd = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".ndb"),
-        blast_out = expand("results/{sample}_blast.out",sample=SAMPLE) 
+        blast_out = expand("results/{sample}_blast.out",sample=SAMPLE),
+        presence_mat = expand("results/{sample}_blast_mat.tsv",sample=SAMPLE)
         
 # Step 1: Create dictionary for blast
 rule create_db:
@@ -62,3 +63,15 @@ rule blast:
         "docker://staphb/blast:2.15.0"
     shell: 
         "blastn -query {input.genome_fasta} -db {params.blast_database} -out {output.blast_out} -outfmt {params.outfmt} -evalue {params.evalue} -max_target_seqs {params.max_target_seqs} &> {log.blast_log}"    
+    
+rule clean_blast:
+    input: 
+        blast_out = str("results/" + "{sample}" + "_blast.out"), 
+        blast_db = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".fasta")
+    output: 
+        presence_mat = f"results/{{sample}}_blast_mat.tsv",
+        blast_annots = f"results/{{sample}}_blast_annots.tsv"
+    conda:
+        "envs/R.yaml"
+    script:
+        "scripts/curate_blast_results.R"
