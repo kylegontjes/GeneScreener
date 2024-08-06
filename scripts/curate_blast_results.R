@@ -21,7 +21,7 @@ get_contig_length <- function(db){
 
 database_length <- get_contig_length(database)  
 
-blast_column_names <- c("qseqid" ,"sseqid" ,"slen" ,"length" ,"pident" ,"nident", "mismatch" ,"gapopen", "gaps", 'qstart', "qend" ,"sstart" ,'send' ,"evalue") 
+blast_column_names <- snakemake@params[[2]] %>% gsub("\\\"","",.) %>% str_split(.," ",simplify=T) %>% .[,2:length(.)]
 blast_file =  read.delim(file_name,header = F,col.names = blast_column_names) 
 
 get_entry_statistics <- function(loci,database_length,blast_file,reporting_vars){
@@ -29,6 +29,7 @@ get_entry_statistics <- function(loci,database_length,blast_file,reporting_vars)
   if(loci %in% blast_file$sseqid){
     blast_entry <- subset(blast_file,sseqid == loci)
     blast_entry$coverage <- (blast_entry$nident / blast_entry$slen) * 100
+    blast_entry$coverage <- round(blast_entry$coverage,3)
     blast_entry$blast_hit <- ifelse(blast_entry$coverage >40 & blast_entry$pident>80,1,0)
     
     blast_df <- blast_entry %>% select(any_of(reporting_vars)) %>% `colnames<-`(paste0(loci,"_",colnames(.)))
@@ -37,7 +38,7 @@ get_entry_statistics <- function(loci,database_length,blast_file,reporting_vars)
   }
   return(blast_df)
 }
-reporting_vars <- c("seqid","blast_hit", "pident","coverage","qstart","qend")
+reporting_vars <- c("seqid","blast_hit","pident","coverage","sstart","send","qstart","qend")
 
 blast_entry_statistics <- lapply(database_length$locus_tag,FUN=get_entry_statistics,database_length=database_length,blast_file=blast_file,reporting_vars=reporting_vars) %>% do.call(cbind,.) %>% as.data.frame %>% mutate(isolate_no = rowname)  %>% `rownames<-`(rowname) 
 

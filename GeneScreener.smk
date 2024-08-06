@@ -15,12 +15,6 @@ if not os.path.exists("results/"):
     except OSError as e:
         print(f"Error creating directory: {e}")
 
-if not os.path.exists("logs"):
-    try:
-        os.makedirs("logs")
-    except OSError as e:
-        print(f"Error creating directory: {e}")
-
 rule all:
     input:
         database_nbd = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".ndb"),
@@ -53,16 +47,14 @@ rule blast:
     output:
         blast_out = f"results/{{sample}}_blast.out" 
     params:     
-        outfmt=config["outfmt"], 
+        outfmt=str(config["outfmt"]), 
         evalue=config["evalue"], 
         max_target_seqs=config["max_target_seqs"],
-        blast_database=str(config["database_directory"]) + "/" + str(config["database_name"])
-    log:
-        blast_log = "logs/{sample}_blast.log"
+        blast_database=str(config["database_directory"]) + "/" + str(config["database_name"]) 
     singularity:
         "docker://staphb/blast:2.15.0"
     shell: 
-        "blastn -query {input.genome_fasta} -db {params.blast_database} -out {output.blast_out} -outfmt {params.outfmt} -evalue {params.evalue} -max_target_seqs {params.max_target_seqs} &> {log.blast_log}"    
+        "blastn -query {input.genome_fasta} -db {params.blast_database} -out {output.blast_out} -outfmt {params.outfmt} -evalue {params.evalue} -max_target_seqs {params.max_target_seqs}"    
     
 rule clean_blast:
     input: 
@@ -72,7 +64,8 @@ rule clean_blast:
         blast_annots = f"results/{{sample}}_blast_annots.tsv",
         presence_mat = f"results/{{sample}}_blast_mat.tsv"
     params:
-        directory=config["directory"]
+        directory=config["directory"],
+        outfmt=str(config["outfmt"])
     singularity:
         "docker://rocker/tidyverse"
     script:
