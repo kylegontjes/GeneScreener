@@ -12,7 +12,7 @@ get_contig_length <- function(db){
   locus_tags <- db %>% subset(grepl(">",db)) %>% gsub(">","",.) %>% str_split(.," ",simplify=T) %>% .[,1]
   contigs <- 1:length(db) %>% .[lapply(.,"%%",2)==0] 
   get_length <- function(entry,db){
-    db[[entry]] %>% nchar
+    db[[entry]] %>% trim(.,which="both") %>% nchar
   }
   contig_length <- sapply(contigs,get_length,db)
   results <- data.frame(locus_tag = locus_tags,length = contig_length)
