@@ -37,10 +37,9 @@ get_entry_statistics <- function(loci,database_length,blast_file,reporting_vars)
     blast_df <-  data.frame(matrix(nrow=1,ncol=length(reporting_vars))) %>% `colnames<-`(paste0(loci,"_",reporting_vars)) 
   }
   return(blast_df)
-}
-reporting_vars <- c("seqid","blast_hit","pident","coverage","sstart","send","qstart","qend")
+} 
 
-blast_entry_statistics <- lapply(database_length$locus_tag,FUN=get_entry_statistics,database_length=database_length,blast_file=blast_file,reporting_vars=reporting_vars) %>% do.call(cbind,.) %>% as.data.frame %>% mutate(isolate_no = rowname)  %>% `rownames<-`(rowname) 
+blast_entry_statistics <- lapply(database_length$locus_tag,FUN=get_entry_statistics,database_length=database_length,blast_file=blast_file,reporting_vars=blast_column_names) %>% do.call(cbind,.) %>% as.data.frame %>% mutate(isolate_no = rowname)  %>% `rownames<-`(rowname) 
 
 write_delim(blast_entry_statistics,file = snakemake@output[[1]]) 
 
