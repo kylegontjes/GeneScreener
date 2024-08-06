@@ -69,9 +69,11 @@ rule clean_blast:
         blast_out = str("results/" + "{sample}" + "_blast.out"), 
         blast_db = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".fasta")
     output: 
-        presence_mat = f"results/{{sample}}_blast_mat.tsv",
-        blast_annots = f"results/{{sample}}_blast_annots.tsv"
-    conda:
-        "envs/R.yaml"
+        blast_annots = f"results/{{sample}}_blast_annots.tsv",
+        presence_mat = f"results/{{sample}}_blast_mat.tsv"
+    params:
+        directory=config["directory"]
+    singularity:
+        "docker://rocker/tidyverse"
     script:
         "scripts/curate_blast_results.R"

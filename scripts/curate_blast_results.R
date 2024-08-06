@@ -1,19 +1,20 @@
-# Libraries
+# Libraries 
+setwd(snakemake@params[[1]])
 library(tidyverse)
 
 # File name
 file_name <-  snakemake@input[[1]]
-rowname <- gsub(".fna|.fasta","",file_name) %>% gsub("_blast.out","",.)
-database <- readLines(snakemake@input[[2]]) 
+rowname <- gsub(".fna|.fasta","",file_name) %>% gsub("_blast.out","",.) %>% gsub("results/","",.)
+database <- readLines(snakemake@input[[2]],warn=F) 
 
-get_contig_length <- function(file){
-  entries <- 1:length(file) %>% .[lapply(.,"%%",2)==1]
-  locus_tags <- file %>% subset(grepl(">",file)) %>% gsub(">","",.) %>% str_split(.," ",simplify=T) %>% .[,1]
-  contigs <- 1:length(file) %>% .[lapply(.,"%%",2)==0] 
-  get_length <- function(entry,file){
-    file[[entry]] %>% nchar
+get_contig_length <- function(db){
+  entries <- 1:length(db) %>% .[lapply(.,"%%",2)==1]
+  locus_tags <- db %>% subset(grepl(">",db)) %>% gsub(">","",.) %>% str_split(.," ",simplify=T) %>% .[,1]
+  contigs <- 1:length(db) %>% .[lapply(.,"%%",2)==0] 
+  get_length <- function(entry,db){
+    db[[entry]] %>% nchar
   }
-  contig_length <- sapply(contigs,get_length,file)
+  contig_length <- sapply(contigs,get_length,db)
   results <- data.frame(locus_tag = locus_tags,length = contig_length)
   return(results)
 }
@@ -38,7 +39,7 @@ get_entry_statistics <- function(loci,database_length,blast_file,reporting_vars)
 }
 reporting_vars <- c("seqid","blast_hit", "pident","coverage","qstart","qend")
 
-blast_entry_statistics <- lapply(database_length$locus_tag,FUN=get_entry_statistics,database_length=database_length,blast_file=blast_file,reporting_vars=reporting_vars) %>% do.call(cbind,.)  %>% `rownames<-`(rowname)
+blast_entry_statistics <- lapply(database_length$locus_tag,FUN=get_entry_statistics,database_length=database_length,blast_file=blast_file,reporting_vars=reporting_vars) %>% do.call(cbind,.) %>% as.data.frame %>% mutate(isolate_no = rowname)  %>% `rownames<-`(rowname) 
 
 write_delim(blast_entry_statistics,file = snakemake@output[[1]]) 
 
@@ -48,5 +49,5 @@ get_blast_matrix_entry <- function(entry_statistics){
   return(matrix)
 }
 
-blast_matrix <- get_blast_matrix_entry(blast_entry_statistics)
+blast_matrix <- get_blast_matrix_entry(blast_entry_statistics) %>% as.data.frame %>% mutate(isolate_no = rowname)
 write_delim(blast_matrix,file = snakemake@output[[2]])

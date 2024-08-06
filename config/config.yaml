@@ -6,12 +6,15 @@ prefix: GeneScreener_smk
 queries: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Sequence_data/PATRIC/2024-07-30_public/assemblies
 
 # Data directory
-database_directory: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Analysis/Operon_genomics/2024-07-31_blast_operon/GeneScreener/database
+database_directory: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Analysis/Operon_genomics/2024-08-06_blast/GeneScreener/database
 database_name: operon_CDS
 
 # Blast parameters
 dbversion: 5 
 dbtype: nucl
 outfmt: 6
-evalue: 1e-100
-max_target_seqs: 1
+evalue: 1e-10
+max_target_seqs: 1000
+
+# R parameters
+directory: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Analysis/Operon_genomics/2024-08-06_blast/GeneScreener/
