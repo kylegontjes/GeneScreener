@@ -44,7 +44,7 @@ blast_entry_statistics <- lapply(database_length$locus_tag,FUN=get_entry_statist
 write_delim(blast_entry_statistics,file = snakemake@output[[1]]) 
 
 get_blast_matrix_entry <- function(entry_statistics){
-  matrix <- entry_statistics %>% select_if(grepl("_blast_hit",colnames(entry_statistics))) %>% `colnames<-`(gsub("_blast_hut","",colnames(.)))
+  matrix <- entry_statistics %>% select_if(grepl("_blast_hit",colnames(entry_statistics))) %>% `colnames<-`(gsub("_blast_hit","",colnames(.)))
   matrix[is.na(matrix)] <- 0
   return(matrix)
 }
