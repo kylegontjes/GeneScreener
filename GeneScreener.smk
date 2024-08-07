@@ -19,7 +19,7 @@ rule all:
     input:
         database_nbd = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".ndb"),
         blast_out = expand("results/{sample}_blast.out",sample=SAMPLE),
-        presence_mat = expand("results/{sample}_blast_mat.tsv",sample=SAMPLE)
+        presence_mat = expand("results/{sample}_blast_clean.tsv",sample=SAMPLE)
         
 # Step 1: Create dictionary for blast
 rule create_db:
@@ -48,21 +48,20 @@ rule blast:
         blast_out = f"results/{{sample}}_blast.out" 
     params:     
         outfmt=str(config["outfmt"]), 
-        evalue=config["evalue"], 
-        max_target_seqs=config["max_target_seqs"],
+        evalue=config["evalue"],  
+        culling_limit=config["culling_limit"],
         blast_database=str(config["database_directory"]) + "/" + str(config["database_name"]) 
     singularity:
         "docker://staphb/blast:2.15.0"
     shell: 
-        "blastn -query {input.genome_fasta} -db {params.blast_database} -out {output.blast_out} -outfmt {params.outfmt} -evalue {params.evalue} -max_target_seqs {params.max_target_seqs}"    
+        "blastn -query {input.genome_fasta} -db {params.blast_database} -out {output.blast_out} -outfmt {params.outfmt} -evalue {params.evalue} -culling_limit {params.culling_limit}"    
     
 rule clean_blast:
     input: 
-        blast_out = str("results/" + "{sample}" + "_blast.out"), 
-        blast_db = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".fasta")
+        blast_out = str("results/" + "{sample}" + "_blast.out"),
+        database_fasta = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".fasta")
     output: 
-        blast_annots = f"results/{{sample}}_blast_annots.tsv",
-        presence_mat = f"results/{{sample}}_blast_mat.tsv"
+        blast_annots = f"results/{{sample}}_blast_clean.tsv" 
     params:
         directory=config["directory"],
         outfmt=str(config["outfmt"])

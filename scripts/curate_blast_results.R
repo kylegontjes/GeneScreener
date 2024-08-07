@@ -4,50 +4,28 @@ library(tidyverse)
 
 # File name
 file_name <-  snakemake@input[[1]]
-rowname <- gsub(".fna|.fasta","",file_name) %>% gsub("_blast.out","",.) %>% gsub("results/","",.)
+isolate <- gsub(".fna|.fasta","",file_name) %>% gsub("_blast.out","",.) %>% gsub("results/","",.)
 database <- readLines(snakemake@input[[2]],warn=F) 
-
-get_contig_length <- function(db){
-  entries <- 1:length(db) %>% .[lapply(.,"%%",2)==1]
-  locus_tags <- db %>% subset(grepl(">",db)) %>% gsub(">","",.) %>% str_split(.," ",simplify=T) %>% .[,1]
-  contigs <- 1:length(db) %>% .[lapply(.,"%%",2)==0] 
-  get_length <- function(entry,db){
-    db[[entry]] %>% trimws(.,which="both") %>% nchar
-  }
-  contig_length <- sapply(contigs,get_length,db)
-  results <- data.frame(locus_tag = locus_tags,length = contig_length)
-  return(results)
-}
-
-database_length <- get_contig_length(database)  
+locus_tags <- database %>% subset(grepl(">",database)) %>% gsub(">","",.) %>% str_split(.," ",simplify=T) %>% .[,1]
 
 blast_column_names <- snakemake@params[[2]] %>% gsub("\\\"","",.) %>% str_split(.," ",simplify=T) %>% .[,2:length(.)]
 blast_file =  read.delim(file_name,header = F,col.names = blast_column_names) 
 
-get_entry_statistics <- function(loci,database_length,blast_file,reporting_vars){
-  locus_length <- subset(database_length,locus_tag==loci) %>% .[,"length"]
+curate_blast_entries <- function(loci,blast_file,name){ 
   if(loci %in% blast_file$sseqid){
     blast_entry <- subset(blast_file,sseqid == loci)
     blast_entry$coverage <- (blast_entry$nident / blast_entry$slen) * 100
     blast_entry$coverage <- round(blast_entry$coverage,3)
-    blast_entry$blast_hit <- ifelse(blast_entry$coverage >40 & blast_entry$pident>80,1,0)
-    
-    blast_df <- blast_entry %>% select(any_of(reporting_vars)) %>% `colnames<-`(paste0(loci,"_",colnames(.)))
+    blast_entry$isolate_no <- name
+    return(blast_entry)
   } else {
-    blast_df <-  data.frame(matrix(nrow=1,ncol=length(reporting_vars))) %>% `colnames<-`(paste0(loci,"_",reporting_vars)) 
-  }
-  return(blast_df)
-} 
-
-blast_entry_statistics <- lapply(database_length$locus_tag,FUN=get_entry_statistics,database_length=database_length,blast_file=blast_file,reporting_vars=blast_column_names) %>% do.call(cbind,.) %>% as.data.frame %>% mutate(isolate_no = rowname)  %>% `rownames<-`(rowname) 
-
-write_delim(blast_entry_statistics,file = snakemake@output[[1]]) 
-
-get_blast_matrix_entry <- function(entry_statistics){
-  matrix <- entry_statistics %>% select_if(grepl("_blast_hit",colnames(entry_statistics))) %>% `colnames<-`(gsub("_blast_hit","",colnames(.)))
-  matrix[is.na(matrix)] <- 0
-  return(matrix)
+    blast_entry <- NULL
+  } 
 }
-
-blast_matrix <- get_blast_matrix_entry(blast_entry_statistics) %>% as.data.frame %>% mutate(isolate_no = rowname)
-write_delim(blast_matrix,file = snakemake@output[[2]])
+  
+blast_entry_statistics <- lapply(locus_tags,FUN=curate_blast_entries,blast_file=blast_file,name=isolate) %>% do.call(rbind,.) %>% as.data.frame   
+if(nrow(blast_entry_statistics)>0){
+  write_delim(blast_entry_statistics,file = snakemake@output[[1]]) 
+} else {
+   file.create(snakemake@output[[1]])
+}   
