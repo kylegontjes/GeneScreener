@@ -1,5 +1,7 @@
 # GeneScreener
-Snakemake to quickly screen gene presence in genes 
+Snakemake to quickly screen gene presence in genes. 
+
+The current version (8/23) is set to run blastn using a set database on a collection of one or more isolates. However, this pipeline can altered to run any flavor of blast.
 
 # Installation
 git clone https://github.com/kylegontjes/GeneScreener.git
