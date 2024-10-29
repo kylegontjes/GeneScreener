@@ -33,6 +33,15 @@ git clone https://github.com/kylegontjes/GeneScreener.git
 
 # Easy run
 
+## Set  up sample directory
+path="/nfs/esnitkin/Project_Penn_KPC/Sequence_data/fastq/Penn/SRA_submission/"
+
+sample_id="sample_id"
+
+sample_names=$(ls -1 $path | grep _R1 | cut -d. -f1 | sed 's_R1\' | sed 's_R2\' | sort | uniq)
+
+echo -e\n $sample_id $sample_names | tr ' ' '\n' > config/sample.tsv
+
 ## Singularity and snakemake are necessary
 
 module load singularity
@@ -40,8 +49,12 @@ module load singularity
 module load snakemake
 
 ## Do dry run to check ability to run
-
+### 1. 
 snakemake -s GeneScreener.smk --dryrun -p
+
+### 2. 
+snakemake -s GeneScreener_2.smk --dryrun -p
+
 
 ## Full run
 ### 1. 
