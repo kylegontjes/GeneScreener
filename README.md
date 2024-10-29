@@ -7,16 +7,24 @@ The current version (8/23) is set to run blastn using a set database on a collec
 # Two purposes
 ## 1. Screen for the presence and position of genes in your database 
 Example: Identify the presence and position of blaKPC genes in genomes
+
 Query: Genome(s)
+
 Database: Set of genes
+
 Snakemake: GeneScreener.smk
+
 Config: config/config.yaml
 
 ## 2. Identify genes in the genome that correspond to a query/queries
 Example: Identify what genome gene's correspond to that in a operon of interest
+
 Query: Set of genes
+
 Database: Genome
+
 Snakemake: GeneScreener_2.smk
+
 Config: config/config_2.yaml
 
 ## Installation
@@ -28,6 +36,7 @@ git clone https://github.com/kylegontjes/GeneScreener.git
 ## Singularity and snakemake are necessary
 
 module load singularity
+
 module load snakemake
 
 ## Do dry run to check ability to run
