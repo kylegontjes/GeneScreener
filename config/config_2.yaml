@@ -1,0 +1,20 @@
+# General information
+samples: config/sample.tsv
+prefix: GeneScreener_smk
+
+# Input queries directory
+query:  /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Analysis/Operon_genomics/2024-10-08_blastx_operon/GeneScreener/query/operon_CDS.fasta
+
+# Data directory
+sample_file_path: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Sequence_data/PATRIC/2024-08-07_public/aa
+database_directory: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Analysis/Operon_genomics/2024-10-08_blastx_operon/GeneScreener/database
+
+# Blast parameters
+dbversion: 5 
+dbtype: prot
+outfmt: "\"6 qseqid sseqid slen length pident nident mismatch gapopen gaps qstart qend sstart send evalue\""
+evalue: 0.05
+culling_limit: 1
+
+# R parameters
+directory: /nfs/turbo/umms-esnitkin/Project_Abau_toxin/Analysis/Operon_genomics/2024-10-08_blastx_operon/GeneScreener/
