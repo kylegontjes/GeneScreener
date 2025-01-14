@@ -68,4 +68,4 @@ rule clean_blast:
     singularity:
         "docker://rocker/tidyverse"
     script:
-        "scripts/curate_blast_results.R"
+        "scripts/curate_blast_results_2.R"
