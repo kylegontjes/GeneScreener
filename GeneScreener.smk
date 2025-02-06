@@ -42,7 +42,7 @@ rule create_db:
 
 rule blast:
     input: 
-        genome_fasta = str(config['queries']) + "/" + "{sample}",
+        genome_fasta = str(config['queries']) + "/" + "{sample}" + ".fasta",
         blast_ndb = expand(str(config["database_directory"]) + "/" + str(config["database_name"]) + ".ndb")
     output:
         blast_out = f"results/{{sample}}_blast.out" 
