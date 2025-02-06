@@ -37,7 +37,7 @@ git clone https://github.com/kylegontjes/GeneScreener.git
 ```
 path="/nfs/esnitkin/Project_Penn_KPC/Sequence_data/fastq/Penn/SRA_submission/"
 sample_id="sample_id"
-sample_names=$(ls -1 $path | grep fasta  | sort | uniq)
+sample_names=$(ls -1 $path | grep fasta | cut -d. -f1 | sort | uniq)
 echo -e\n $sample_id $sample_names | tr ' ' '\n' > config/sample.tsv
 ```
 
