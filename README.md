@@ -4,6 +4,15 @@ Snakemake to screen gene presence in genes quickly.
 
 The current version (8/23) is set to run blastn using a set database on a collection of one or more isolates. However, this pipeline can altered to run any flavor of blast.
 
+# Create index of reference genome
+```
+module load Bioinformatics
+
+module load bwa
+
+bwa index [reference genome]
+```
+
 # Two purposes
 ## 1. Screen for the presence and position of genes in your database 
 Example: Identify the presence and position of blaKPC genes in genomes
