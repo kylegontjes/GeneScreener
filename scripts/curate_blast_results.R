@@ -14,8 +14,8 @@ blast_file =  read.delim(file_name,header = F,col.names = blast_column_names)
 curate_blast_entries <- function(loci,blast_file,name){ 
   if(loci %in% blast_file$sseqid){
     blast_entry <- subset(blast_file,sseqid == loci)
-    blast_entry$coverage <- (blast_entry$nident / blast_entry$slen) * 100
-    blast_entry$coverage <- round(blast_entry$coverage,3)
+    blast_entry$coverage <- (blast_entry$length / blast_entry$slen) * 100
+    blast_entry$coverage <- round(blast_entry$coverage,3) 
     blast_entry$isolate_no <- name
     return(blast_entry)
   } else {
