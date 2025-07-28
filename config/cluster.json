@@ -4,7 +4,7 @@
      "account": "esnitkin1",
      "partition": "standard",
      "nodes": 1,
-     "procs": 4,
+     "procs": 1,
      "pmem": "5GB",
      "walltime": "0:15:00",
      "email": "kgontjes@umich.edu",
